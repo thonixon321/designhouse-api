@@ -54,6 +54,13 @@ return [
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
         ],
+        //temporary disk (transition point for files when they are initially loaded before we manipulate them and store them in other directories)
+        'tmp' => [
+            'driver' => 'local',
+            'root' => storage_path(),
+            'url' => env('APP_URL').'/storage', //takes domain of app and links to path of storage folder
+            'visibility' => 'public',
+        ],
 
         's3' => [
             'driver' => 's3',
