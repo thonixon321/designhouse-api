@@ -7,12 +7,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\Verified;
+use App\Repositories\Contracts\IUser;
 use App\Providers\RouteServiceProvider;
 
 // use Illuminate\Foundation\Auth\VerifiesEmails;
 
 class VerificationController extends Controller
 {
+    protected $users;
     
     //comment this out to override some methods from it. We do not need the web views. We set things up to just return json for an api.
     // use VerifiesEmails;
@@ -22,8 +24,9 @@ class VerificationController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(IUser $users)
     {
+        $this->users = $users;
         //don't need the middlewar since we wrapped it in the api routes file
         // $this->middleware('auth');
 
@@ -64,7 +67,7 @@ class VerificationController extends Controller
             'email' => ['email', 'required']
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = $this->users->findWhereFirst('email', $request->email);
         
         if (! $user) {
             return response()->json(["errors" => [
