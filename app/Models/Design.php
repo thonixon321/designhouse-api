@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Likeable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Cviebrock\EloquentTaggable\Taggable;
 
 class Design extends Model
 {
-    use Taggable;
+    use Taggable, Likeable;
     //fields (cols) we want in the DB for this model
     protected $fillable = [
         'user_id',
@@ -21,6 +22,13 @@ class Design extends Model
         'upload_successful',
         'disk'
     ];
+
+    public function comments()
+    {
+        //provide the relationship in the comment class with 'commentable' which you see in the comments migration file
+        return $this->morphMany(Comment::class, 'commentable')
+                    ->orderBy('created_at', 'asc');
+    }
 
     public function user()
     {

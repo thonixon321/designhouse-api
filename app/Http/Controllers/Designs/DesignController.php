@@ -11,6 +11,7 @@ use App\Repositories\Contracts\IDesign;
 use Illuminate\Support\Facades\Storage;
 use App\Repositories\Eloquent\Criteria\IsLive;
 use App\Repositories\Eloquent\Criteria\ForUser;
+use App\Repositories\Eloquent\Criteria\EagerLoad;
 use App\Repositories\Eloquent\Criteria\LatestFirst;
 
 class DesignController extends Controller
@@ -27,11 +28,12 @@ class DesignController extends Controller
     public function index()
     {
         //now that we have access to the all() from the above constructor -
-        //so we don't have to do Design::all() and pull in the model directly, this is now hooked up to the repository contract which defines methods we want to use on a model, and it makes our code more modular since we can further control how we access the DB, the methods that access the DB are in just one location now and can be accessed from anywhere (kind of like a vuex store) - withCriteria allow us to use additional filters on the data (all designs)
+        //so we don't have to do Design::all() and pull in the model directly, this is now hooked up to the repository contract which defines methods we want to use on a model, and it makes our code more modular since we can further control how we access the DB. So if we decided to not use Eloquent for accessing the DB, we could easily swap it out for some other DB engine, and as long as we bind it to the contracts everything should work fine. The methods that access the DB are in just one location now and can be accessed from anywhere (kind of like a vuex store) - withCriteria allow us to use additional filters on the data (all designs)
         $designs = $this->designs->withCriteria([
             new LatestFirst(),
             new IsLive(),
-            new ForUser(1)
+            new ForUser(2),
+            new EagerLoad(['user', 'comments'])
         ])->all();
         //this is how you access all of the designs while using the Design Resource - as opposed to returning just one with new DesignResource($design);
         return DesignResource::collection($designs);
@@ -89,7 +91,22 @@ class DesignController extends Controller
         }
 
         //delete record from DB
-        $this->designs->delete();
+        $this->designs->delete($id);
         return response()->json(['message' => 'Record deleted'], 200);
+    }
+
+    public function like($id)
+    {
+        $this->designs->like($id);
+
+        return response()->json(['message' => 'Successful'], 200);
+    }
+
+    //check if current user has liked the design
+    public function checkIfUserHasLiked($designId)
+    {
+       $isLiked = $this->designs->isLikedByUser($designId);
+
+       return response()->json(['liked' => $isLiked], 200);
     }
 }

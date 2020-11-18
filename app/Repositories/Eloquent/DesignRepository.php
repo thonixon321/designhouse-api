@@ -21,4 +21,33 @@ class DesignRepository extends BaseRepository implements IDesign
       $design = $this->find($id);
       $design->retag($data);
    }
+
+   public function addComment($designId, array $data)
+   {
+       //get the design for which we want to create a comment
+       $design = $this->find($designId);
+
+       //create the comment for the design
+       $comment = $design->comments()->create($data);
+
+       return $comment;
+   }
+
+   public function like($id)
+   {
+       //get the design for which we want to create/uncreate like
+       $design = $this->model->findOrFail($id);
+       if ($design->isLikedByUser(auth()->id())) {
+           $design->unlike();
+       } else {
+           $design->like();
+       }
+   }
+   //this has the same name as a method in the likeable trait
+   public function isLikedByUser($id)
+   {
+        $design = $this->model->findOrFail($id);
+        //see if the design found is liked by current user
+        return $design->isLikedByUser(auth()->id());
+   }
 }

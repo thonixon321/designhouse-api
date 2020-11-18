@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\CommentResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DesignResource extends JsonResource
@@ -16,12 +17,14 @@ class DesignResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            //here is where we can access the user resource and not just return a user id, but the entire user info
-            'user' => new UserResource($this->user),
+            //here is where we can access the user resource and not just return a user id, but the entire user info - whenLoaded is a laravel method that will only return the comments in the resource if it was eager loaded in the design controller
+            'comments' => CommentResource::collection($this->whenLoaded('comments')),
+            'user' => new UserResource($this->whenLoaded('user')),
             'title' => $this->title,
             'slug' => $this->slug,
             'images' => $this->images,
             'is_live' => $this->is_live,
+            'likes_count' => $this->likes()->count(),
             'description' => $this->description,
             'tag_list' => [
                 'tags' => $this->tagArray,

@@ -19,6 +19,15 @@ Route::group(['middleware' => ['auth:api']], function() {
     Route::post('designs', 'Designs\UploadController@upload');
     Route::put('designs/{id}', 'Designs\DesignController@update');
     Route::delete('designs/{id}', 'Designs\DesignController@destroy');
+    
+    //Likes
+    Route::post('designs/{id}/like', 'Designs\DesignController@like');
+    Route::get('designs/{id}/liked', 'Designs\DesignController@checkIfUserHasLiked');
+
+    //Comments for designs
+    Route::post('designs/{id}/comments', 'Designs\CommentController@store');
+    Route::put('comments/{id}', 'Designs\CommentController@update');
+    Route::delete('comments/{id}', 'Designs\CommentController@destroy');
 });
 //Route group for guests only (not logged in yet)
 Route::group(['middleware' => ['guest:api']], function() {
