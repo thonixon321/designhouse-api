@@ -56,10 +56,12 @@ class DesignController extends Controller
             //the title (therefore not unique) we don't want to send an error in that case, only when it is truly a different design being edited
             'title' => ['required', 'unique:designs,title,'. $id],
             'description' => ['required', 'string', 'min:20', 'max:140'],
-            'tags' => ['required']
+            'tags' => ['required'],
+            'team' => ['required_if:assign_to_team,true'] //this allows the update request to include a 'assign_to_team' field that can be set to true, if it is then the team field is required
         ]);
         //you can see some of the benefits of extracting out the update functionality here from being directly on the model to being used in a repository. For example, if an admin wanted to update the design, you wouldn't need to make another update method of the admin controller, you could reuse this same method here      
         $design = $this->designs->update($id,[
+            'team_id' => $request->team,
             'title' => $request->title,
             'description' => $request->description,
             'slug' => Str::slug($request->title),

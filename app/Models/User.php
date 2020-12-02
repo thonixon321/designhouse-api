@@ -109,4 +109,10 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
                     ->where('owner_id', $this->id)
                     ->count();
     }
+
+    //relationships for invitations - which ones are pending for the user to accept or deny
+    public function invitations()
+    {
+        return $this->hasMany(Invitation::class, 'recipient_email', 'email');
+    }
 }

@@ -22,7 +22,10 @@ class UserResource extends JsonResource
             'username' => $this->username,
             'email' => $this->email,
             'name' => $this->name,
-            'designs' => $this->designs,
+            //only want to get the designs of users when we explictly load them from a controller (e.g. attach the Design model in the controller somewhere like in the eager load criteria ) - because for instance when we update a team and it returns the team info with all of its members from the team resource, we don't really need to see all of the designs for each team member. It is too much unneeded info to the frontend
+            'designs' => DesignResource::collection( 
+                $this->whenLoaded('designs')
+            ),
             'create_dates' => [
                 'created_at_human' => $this->created_at->diffForHumans(),
                 'created_at' => $this->created_at,

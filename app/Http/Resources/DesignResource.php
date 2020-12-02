@@ -20,6 +20,10 @@ class DesignResource extends JsonResource
             //here is where we can access the user resource and not just return a user id, but the entire user info - whenLoaded is a laravel method that will only return the comments in the resource if it was eager loaded in the design controller
             'comments' => CommentResource::collection($this->whenLoaded('comments')),
             'user' => new UserResource($this->whenLoaded('user')),
+            'team' => $this->team ? [
+                'name' => $this->team->name,
+                'slug' => $this->team->slug,
+            ] : null,
             'title' => $this->title,
             'slug' => $this->slug,
             'images' => $this->images,

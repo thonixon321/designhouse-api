@@ -13,6 +13,7 @@ class Design extends Model
     //fields (cols) we want in the DB for this model
     protected $fillable = [
         'user_id',
+        'team_id',
         'image',
         'title',
         'description',
@@ -34,6 +35,11 @@ class Design extends Model
     {
         //each design belongs to a user
         return $this->belongsTo(User::class);
+    }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
     }
 
     //getter/mutator to access the $this->images - even though we don't have that column in the DB (we have an image column); this is utilized in the DesignResource
