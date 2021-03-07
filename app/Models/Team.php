@@ -60,7 +60,7 @@ class Team extends Model
     }
 
     //relation to invitations
-    public function invitation()
+    public function invitations()
     {
         return $this->hasMany(Invitation::class);
     }
@@ -68,7 +68,7 @@ class Team extends Model
     //pending invitation for particular email given?
     public function hasPendingInvite($email)
     {
-        return (bool)$this->invitation()
+        return (bool)$this->invitations()
                           ->where('recipient_email', $email)
                           ->count();
     }
